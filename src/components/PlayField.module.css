@@ -1,0 +1,7 @@
+.play-field {
+  display: grid;
+  width: 100%;
+  max-width: 45vw;
+  grid-template-columns: repeat(30, 1fr);
+  grid-template-rows: repeat(30, calc(45vw / 30));
+}
