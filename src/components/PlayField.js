@@ -12,9 +12,14 @@ const PlayField = (props) => {
     playField[wormSegment[1]][wormSegment[0]] = [1, "snake"];
   });
 
+  props.food.forEach((foodSegment) => {
+    playField[foodSegment[1]][foodSegment[0]] = [1, "food"];
+  });
+
   return (
     <div className={classes["play-field"]}>
       {playField.map((row) => row.map((cell, x) => <Field type={cell[1]} />))}
+      {props.gameover && <div className={classes["game-over"]}>GAME OVER</div>}
     </div>
   );
 };
