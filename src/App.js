@@ -6,6 +6,7 @@ import classes from "./App.module.css";
 function App() {
   const [direction, setDirection] = useState("RIGHT");
   const directionRef = useRef("RIGHT");
+  const client = useRef();
 
   const [game, moveSnake] = useReducer(
     (state, action) => {
@@ -137,12 +138,32 @@ function App() {
   );
 
   useEffect(() => {
-    console.log("Render");
+    client.current = new WebSocket("ws://localhost:3200/ws");
+
+    client.current.onopen = () => {
+      console.log("WebSocket Client Connected");
+    };
+    client.current.onmessage = (message) => {
+      console.log(message);
+    };
+    client.current.onclose = (event) => {
+      console.log("WebSocket Client Closed");
+    };
+    client.current.onerror = (event) => {
+      console.log(event);
+    };
+    return () => {
+      client.current.close();
+    };
+  }, []);
+
+  useEffect(() => {
     const keyDownHandler = (event) => {
       // 37 left, 40 down, 39 right, 38 up
       switch (event.keyCode) {
         case 37:
           if (directionRef.current !== "RIGHT") directionRef.current = "LEFT";
+          client.current.send(JSON.stringify({ data: "CREATENEWSERVER" }));
           break;
         case 38:
           if (directionRef.current !== "DOWN") directionRef.current = "UP";
@@ -165,8 +186,6 @@ function App() {
       window.removeEventListener("keydown", keyDownHandler);
     };
   }, [direction]);
-
-  const test = useCallback(() => {}, []);
 
   useEffect(() => {
     setInterval(() => {
